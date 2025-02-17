@@ -1487,11 +1487,43 @@ static bool saveEntry(FILE* outFile, char* path, rk_entry_type type,
 	return true;
 }
 
+// static inline uint32_t convertChipType(const char* chip) {
+// 	char buffer[5];
+// 	memset(buffer, 0, sizeof(buffer));
+// 	snprintf(buffer, sizeof(buffer), "%s", chip);
+// 	return buffer[0] << 24 | buffer[1] << 16 | buffer[2] << 8 | buffer[3];
+// }
+
+/**
+ * @brief parse the chip string to a 32bit integer
+ * 
+ * @author Xiaohei1244
+ * @param chip 
+ * @return uint32_t 
+ * @date 2025-2-16
+ */
+
 static inline uint32_t convertChipType(const char* chip) {
-	char buffer[5];
-	memset(buffer, 0, sizeof(buffer));
-	snprintf(buffer, sizeof(buffer), "%s", chip);
-	return buffer[0] << 24 | buffer[1] << 16 | buffer[2] << 8 | buffer[3];
+    // initialize a buffer to hold the chip string
+    char buffer[5] = {0};
+    
+    // limit the length of the chip string to 4 characters
+    size_t len = strlen(chip);
+    size_t copy_len = (len > 4) ? 4 : len;
+    
+    // copy the chip string to the buffer
+    for(size_t i = 0; i < copy_len; i++) {
+        buffer[i] = chip[i];
+    }
+
+    // make sure the buffer is null-terminated
+    buffer[4] = '\0';
+    
+    // convert to 32bit integer
+    return ((uint32_t)buffer[0] << 24) | 
+           ((uint32_t)buffer[1] << 16) | 
+           ((uint32_t)buffer[2] << 8) | 
+           (uint32_t)buffer[3];
 }
 
 static inline uint32_t getChipType(const char* chip) {
